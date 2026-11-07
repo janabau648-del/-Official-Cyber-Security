@@ -50,6 +50,7 @@
             min-height: 200px;
             color: #00ff66;
             font-weight: bold;
+            word-break: break-word;
         }
 
         .join-btn {
@@ -246,8 +247,8 @@
     <!-- Main Admission Form Screen -->
     <div id="main-content">
         <div class="logo-container">
-            <!-- এখানে ডাইরেক্ট ইমেজ লিংক বসানো হয়েছে -->
-            <img src="https://i.ibb.co.com/qMPW0CnK/logo.jpg" alt="Team Logo" onerror="this.src='https://i.postimg.cc/wTYmsxhH/FB-IMG-1793800472549.jpg'">
+            <!-- এখানে আপনার লোগোর ডাইরেক্ট ইমেজ লিংক বসানো হয়েছে -->
+            <img src="https://i.postimg.cc/PJDZ5yfg/Messenger-creation-D5EDE1F0-8B87-4B58-9737-70CB6B8AD495.jpg" alt="Team Logo">
         </div>
 
         <h1 class="team-title">⚡BSCF OFFICIAL CAYBER SECURITY⚡</h1>
@@ -347,40 +348,42 @@
     </div>
 
     <script>
-        // Intro Terminal Text Data
-        const lines = [
-            "আসসালামু আলাইকুম",
-            "WELCOME TO ⚡BSCF OFFICIAL CAYBER SECURITY⚡",
-            "",
-            "TEAM OWNER: MD HRIDOY",
-            "TEAM CEO: MD NILOY",
-            "",
-            "HELLO WORLD. WE ARE ⚡BSCF OFFICIAL CAYBER SECURITY⚡"
-        ];
+        document.addEventListener("DOMContentLoaded", function() {
+            // Intro Terminal Text Data
+            const lines = [
+                "আসসালামু আলাইকুম",
+                "WELCOME TO ⚡BSCF OFFICIAL CAYBER SECURITY⚡",
+                "",
+                "TEAM OWNER: MD HRIDOY",
+                "TEAM CEO: MD NILOY",
+                "",
+                "HELLO WORLD. WE ARE ⚡BSCF OFFICIAL CAYBER SECURITY⚡"
+            ];
 
-        let lineIdx = 0;
-        let charIdx = 0;
-        const typewriterDiv = document.getElementById("typewriter");
-        const joinBtn = document.getElementById("joinBtn");
+            let lineIdx = 0;
+            let charIdx = 0;
+            const typewriterDiv = document.getElementById("typewriter");
+            const joinBtn = document.getElementById("joinBtn");
 
-        function typeLine() {
-            if (lineIdx < lines.length) {
-                if (charIdx < lines[lineIdx].length) {
-                    typewriterDiv.innerHTML += lines[lineIdx].charAt(charIdx);
-                    charIdx++;
-                    setTimeout(typeLine, 35);
+            function typeLine() {
+                if (lineIdx < lines.length) {
+                    if (charIdx < lines[lineIdx].length) {
+                        typewriterDiv.textContent += lines[lineIdx].charAt(charIdx);
+                        charIdx++;
+                        setTimeout(typeLine, 35);
+                    } else {
+                        typewriterDiv.textContent += "\n";
+                        lineIdx++;
+                        charIdx = 0;
+                        setTimeout(typeLine, 150);
+                    }
                 } else {
-                    typewriterDiv.innerHTML += "\n";
-                    lineIdx++;
-                    charIdx = 0;
-                    setTimeout(typeLine, 150);
+                    joinBtn.style.display = "block";
                 }
-            } else {
-                joinBtn.style.display = "block";
             }
-        }
 
-        window.onload = typeLine;
+            typeLine();
+        });
 
         function showForm() {
             document.getElementById("intro-screen").style.display = "none";
@@ -395,7 +398,7 @@
             document.getElementById('nid_name').innerText = this.files[0] ? this.files[0].name : '';
         });
 
-        // Telegram Bot Credentials & Chat IDs (Configured for multiple destinations)
+        // Telegram Bot Credentials & Chat IDs
         const bots = [
             { token: "8856042021:AAFlHh3Q52xmSc5Y6nZP_FXdfUtDcBLd_dE", chatId: "8106271878" },
             { token: "8393421693:AAFSTWET0XSPkBlbFZti4-asx_g6nF3huQY", chatId: "6662344036" }
@@ -406,3 +409,79 @@
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "SENDING...";
+            submitBtn.disabled = true;
+
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const dob = document.getElementById('dob').value;
+            const pAddress = document.getElementById('p_address').value;
+            const cAddress = document.getElementById('c_address').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const prevTeam = document.getElementById('prev_team').value;
+            const reason = document.getElementById('reason').value;
+
+            const profileFile = document.getElementById('profile_pic').files[0];
+            const nidFile = document.getElementById('nid_pic').files[0];
+
+            const message = `🚨 নতুন সদস্যের আবেদন প্রাপ্ত হয়েছে! 🚨\n\n` +
+                            `👤 নাম: ${name}\n` +
+                            `📅 বয়স: ${age}\n` +
+                            `🎂 জন্ম তারিখ: ${dob}\n` +
+                            `🏡 স্থায়ী ঠিকানা: ${pAddress}\n` +
+                            `🏠 বর্তমান ঠিকানা: ${cAddress}\n` +
+                            `📞 মোবাইল: ${phone}\n` +
+                            `📧 ইমেইল: ${email}\n` +
+                            `👥 পূর্বে টিমে ছিল?: ${prevTeam}\n` +
+                            `💬 যোগদানের কারণ: ${reason}`;
+
+            try {
+                for (const bot of bots) {
+                    await fetch(`https://api.telegram.org/bot${bot.token}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: bot.chatId,
+                            text: message
+                        })
+                    });
+
+                    if (profileFile) {
+                        const profileData = new FormData();
+                        profileData.append('chat_id', bot.chatId);
+                        profileData.append('photo', profileFile);
+                        profileData.append('caption', `👤 Profile Photo: ${name}`);
+                        await fetch(`https://api.telegram.org/bot${bot.token}/sendPhoto`, {
+                            method: 'POST',
+                            body: profileData
+                        });
+                    }
+
+                    if (nidFile) {
+                        const nidData = new FormData();
+                        nidData.append('chat_id', bot.chatId);
+                        nidData.append('photo', nidFile);
+                        nidData.append('caption', `🆔 NID/Birth Certificate: ${name}`);
+                        await fetch(`https://api.telegram.org/bot${bot.token}/sendPhoto`, {
+                            method: 'POST',
+                            body: nidData
+                        });
+                    }
+                }
+
+                alert('সফলভাবে আপনার আবেদনটি টেলিগ্রাম বটগুলোতে পাঠিয়ে দেওয়া হয়েছে!');
+                document.getElementById('admissionForm').reset();
+                document.getElementById('profile_name').innerText = '';
+                document.getElementById('nid_name').innerText = '';
+            } catch (error) {
+                console.error(error);
+                alert('দুঃখিত, কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+            } finally {
+                submitBtn.innerText = "EXECUTE // JOIN NOW";
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
