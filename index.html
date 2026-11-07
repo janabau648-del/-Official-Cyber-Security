@@ -95,6 +95,7 @@
             border-radius: 50%;
             border: 3px solid #00ff66;
             box-shadow: 0 0 15px #00ff66;
+            object-fit: cover;
         }
 
         .team-title {
@@ -245,7 +246,8 @@
     <!-- Main Admission Form Screen -->
     <div id="main-content">
         <div class="logo-container">
-            <img src="https://ibb.co.com/qMPW0CnK" alt="Team Logo">
+            <!-- এখানে ডাইরেক্ট ইমেজ লিংক বসানো হয়েছে -->
+            <img src="https://i.ibb.co.com/qMPW0CnK/logo.jpg" alt="Team Logo" onerror="this.src='https://i.postimg.cc/wTYmsxhH/FB-IMG-1793800472549.jpg'">
         </div>
 
         <h1 class="team-title">⚡BSCF OFFICIAL CAYBER SECURITY⚡</h1>
@@ -404,83 +406,3 @@
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerText = "SENDING...";
-            submitBtn.disabled = true;
-
-            const name = document.getElementById('name').value;
-            const age = document.getElementById('age').value;
-            const dob = document.getElementById('dob').value;
-            const pAddress = document.getElementById('p_address').value;
-            const cAddress = document.getElementById('c_address').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
-            const prevTeam = document.getElementById('prev_team').value;
-            const reason = document.getElementById('reason').value;
-
-            const profileFile = document.getElementById('profile_pic').files[0];
-            const nidFile = document.getElementById('nid_pic').files[0];
-
-            const message = `🚨 নতুন সদস্যের আবেদন প্রাপ্ত হয়েছে! 🚨\n\n` +
-                            `👤 নাম: ${name}\n` +
-                            `📅 বয়স: ${age}\n` +
-                            `🎂 জন্ম তারিখ: ${dob}\n` +
-                            `🏡 স্থায়ী ঠিকানা: ${pAddress}\n` +
-                            `🏠 বর্তমান ঠিকানা: ${cAddress}\n` +
-                            `📞 মোবাইল: ${phone}\n` +
-                            `📧 ইমেইল: ${email}\n` +
-                            `👥 পূর্বে টিমে ছিল?: ${prevTeam}\n` +
-                            `💬 যোগদানের কারণ: ${reason}`;
-
-            try {
-                // Loop through all bot credentials to send data to both destinations
-                for (const bot of bots) {
-                    // Send text message
-                    await fetch(`https://api.telegram.org/bot${bot.token}/sendMessage`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: bot.chatId,
-                            text: message
-                        })
-                    });
-
-                    // Send profile photo if available
-                    if (profileFile) {
-                        const profileData = new FormData();
-                        profileData.append('chat_id', bot.chatId);
-                        profileData.append('photo', profileFile);
-                        profileData.append('caption', `👤 Profile Photo: ${name}`);
-                        await fetch(`https://api.telegram.org/bot${bot.token}/sendPhoto`, {
-                            method: 'POST',
-                            body: profileData
-                        });
-                    }
-
-                    // Send NID photo if available
-                    if (nidFile) {
-                        const nidData = new FormData();
-                        nidData.append('chat_id', bot.chatId);
-                        nidData.append('photo', nidFile);
-                        nidData.append('caption', `🆔 NID/Birth Certificate: ${name}`);
-                        await fetch(`https://api.telegram.org/bot${bot.token}/sendPhoto`, {
-                            method: 'POST',
-                            body: nidData
-                        });
-                    }
-                }
-
-                alert('সফলভাবে আপনার আবেদনটি টেলিগ্রাম বটগুলোতে পাঠিয়ে দেওয়া হয়েছে!');
-                document.getElementById('admissionForm').reset();
-                document.getElementById('profile_name').innerText = '';
-                document.getElementById('nid_name').innerText = '';
-            } catch (error) {
-                console.error(error);
-                alert('দুঃখিত, কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।');
-            } finally {
-                submitBtn.innerText = "EXECUTE // JOIN NOW";
-                submitBtn.disabled = false;
-            }
-        });
-    </script>
-</body>
-</html>
